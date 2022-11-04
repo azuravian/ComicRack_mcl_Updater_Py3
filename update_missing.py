@@ -40,21 +40,19 @@
     can potentially wreak some havoc if not treated carefully.    
 """
 
-from __future__ import unicode_literals
-import unicodedata
 import requests
 import sys
+import os
 
-if len(sys.argv) < 6 :
-    print("usage: python update_missing.py <in_file> <out_file> <api_key> <start_date> <end_date>")
+if len(sys.argv) < 4 :
+    print("usage: python update_missing.py <api_key> <start_date> <end_date>")
     exit()
 
-in_file = str(sys.argv[1])        # missing.mcl
-out_file = str(sys.argv[2])     # updated_missing.mcl
-api_key = str(sys.argv[3])         # ComicVine API key
-start_date = str(sys.argv[4])     # start date range to search for new issues
-end_date = str(sys.argv[5])        # end date range to search for new issues
-
+api_key = str(sys.argv[1])         # ComicVine API key
+start_date = str(sys.argv[2])     # start date range to search for new issues
+end_date = str(sys.argv[3])        # end date range to search for new issues
+in_file = str(f"{sys.argv[2]}_latest.mcl")
+out_file = str(f"{sys.argv[3]}_latest.mcl")
 
 comiclist = open(in_file, "r")
 issues_number = {}
@@ -196,6 +194,7 @@ for volume_id in sorted(comics):
     outfile.write(bytes(str(volume_id) + ";" + issues + ";" + nums + "\n", 'utf-8'))
     
 outfile.close()
+os.rename(in_file,in_file.replace('latest', 'missing'))
 
 print("Done! " + str(new_comics_cont) + " comics added to database! (" + str(comic_skip_cont)+ " skipped and " + str(old_comics_cont) + " comics already in database)")
 print(str(deleted_comics_cont) + " comics in databased not retrieved in this round.")
